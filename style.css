@@ -1,0 +1,125 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: #001949!important;
+}
+
+#pokemon-logo {
+    position: fixed;
+    top: 1em;
+    left: 1em;
+}
+
+#trademark img{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    height: 30px;
+}
+
+/* TODO: Add media query for showing a smaller logo when on mobile */
+#pokemon-logo img {
+    width: 200px;
+}
+
+#map {
+    height: 100%;
+}
+
+/* TODO: Add media query for not displaying the menu first when on mobile */
+#menu-open {
+    display: none;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    background-color: #ffffff;
+    border: solid 2px #001949;
+    padding: 5px;
+    border-radius: 5px;
+    color: #001949;
+}
+
+#menu-open:hover {
+    background-color: #001949;
+    color: #ffffff;
+}
+
+#menu {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    background-color: #ffffff;
+    opacity: 0.9;
+    border: solid 5px #001949;
+    border-radius: 10px;
+    width: 200px;
+    min-height: 400px;
+    padding: 10px 10px 20px 10px;
+}
+
+.btn-primary{
+    background-color: #001949!important;
+    border-color: #001123 !important;
+}
+
+.btn-primary:hover{
+    background-color: #002a9e !important;
+    border-color: #001e72 !important;
+}
+
+.no-margin-top {
+    margin-top: 0;
+}
+
+#add-area {
+    font-family:'FontAwesome';
+}
+
+#menu-close {
+    background-color: #001949;
+    position: absolute;
+    top: 5px;
+    left: -32px;
+    font-size: 2em;
+    color: #ffffff;
+    padding: 5px 1px;
+    border: solid 5px #001949;
+}
+
+#menu-close:hover{
+    background-color: #ffffff;
+    color: #001949;
+    cursor: pointer;
+}
+
+#add-success,
+#add-error{
+    display: none;
+}
+
+/* MOBILE QUERIES */
+@media (max-width: 460px) {
+    #menu {
+        display: none;
+    }
+
+    #menu-open {
+        display: block;
+    }
+
+    @media (max-height: 500px){
+        #pokemon-logo img {
+            width: 100px;
+        }
+    }
+
+    @media (min-height: 500px){
+        #pokemon-logo img {
+            width: 150px;
+        }
+    }
+}
+
+
+

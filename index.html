@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pokémon Map</title>
+    <meta name="description" content="Pokémon Map">
+    <meta name="author" content="Ellen Langelaar">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+    <meta charset="utf-8">
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="pokemon-logo">
+    <img src="img/pokemon-logo.png" onerror="this.style='display:none'">
+</div>
+
+<div id="menu-open"><i class="fa fa-bars" aria-hidden="true"></i></div>
+
+<div id="menu">
+    <div id="menu-close"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
+    <div id="add-wrapper">
+        <h4>Add a Pokémon</h4>
+        <hr class="no-margin-top">
+        <table class="table table-bordered">
+            <tr>
+                <td>
+                    <select id="add-pokemon" title="pokemon" class="form-control">
+                        <option disabled selected>Pokémon</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select id="add-area" title="radius" class="form-control">
+                        <option disabled selected>Area</option>
+                        <option value="1"> &#xf1b0; &#xf1b0; &#xf1b0; (150 - 200 meter)</option>
+                        <option value="2"> &#xf1b0; &#xf1b0; (100 - 150 meter)</option>
+                        <option value="3"> &#xf1b0; (0 - 100 meter)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="add-latitude" type="text" class="form-control" placeholder="Latitude" maxlength="200">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="add-longitude" type="text" class="form-control" placeholder="Longitude" maxlength="200">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="add-name" type="text" class="form-control" placeholder="Your name" maxlength="100">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="add" class="form-control btn btn-primary">Add</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="add-success">
+        <h2>Pokémon is added!</h2>
+        <button class="btn btn-primary" id="btn-add-pokemon"><i class="fa fa-repeat" aria-hidden="true"></i> Add another</button>
+    </div>
+
+    <div id="add-error">
+        <h2>Oops!</h2>
+        <h3>There was an error.</h3>
+    </div>
+
+    <div id="trademark">
+        <a href="http://www.ellenlangelaar.nl"><img src="img/ellenlangelaar.png" alt="ellenlangelaar.nl"></a>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // CLICK EVENT TO OPEN THE MOBILE MENU
+        $('#menu-open').click(function(e){
+            $('#menu').css('display','block');
+            $('#menu-open').css('display','none');
+        });
+
+        // CLICK EVENT TO CLOSE THE MOBILE MENU
+        $('#menu-close').click(function(e){
+            $('#menu').css('display','none');
+            $('#menu-open').css('display','block');
+        });
+
+        // CLICK EVENT FOR ADDING A POKEMON
+        $('#add').click(function(e){
+            sendSighting();
+        });
+
+        // CLICK EVENT FOR SHOWING THE ADD PAGE
+        $('#btn-add-pokemon').click(function(){
+            location.reload(); // TODO: Fix in future, show name etc.
+        });
+
+        // SET SELECT VALUES
+        setPokemon();
+    });
+
+
+    /**
+     * Init the map
+     */
+    var map;
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 52.211840, lng: 5.971564},
+            zoom: 14,
+            disableDefaultUI: true,
+            zoomControl: true
+        });
+
+        google.maps.event.addListener(map, 'click', function(args) {
+            $('#add-latitude').val(args.latLng.lat());
+            $('#add-longitude').val(args.latLng.lng());
+        });
+
+
+        getDataPoints();
+    }
+
+    /**
+     * Place all the data points on the map
+     */
+    function placeDataPoints(data){
+        for(i = 0; i < data.length; i++) {
+            // SET VARIABLES
+            var type = data[i][2];
+            var radius = type === 1 ? 0.2 : type === 2 ? 0.15 : 0.1;
+            var colour = type === 1 ? '#FF0000' : type === 2 ? '#EEE60F' : '#283BEE';
+            var opacity = type !== 3 ? 0.35 : 0.7;
+
+            // CREATE A NEW CIRCLE ON THE MAP
+            var circle = new google.maps.Polygon({
+                map: map,
+                paths: [drawCircle(new google.maps.LatLng(data[i][0],data[i][1]), radius, 1)],
+                strokeColor: "#FFFFFF",
+                strokeOpacity: 0,
+                strokeWeight: 0,
+                fillColor: colour,
+                fillOpacity: opacity
+            });
+
+            // ADD A CLICK EVENT SO OTHER POKEMONS CAN BE ADDED ON TOP OF IT
+            google.maps.event.addListener(circle, 'click', function(args) {
+                $('#add-latitude').val(args.latLng.lat());
+                $('#add-longitude').val(args.latLng.lng());
+            });
+        }
+    }
+
+    /**
+     * Get all the data points
+     */
+    function getDataPoints() {
+        var dataPoints = [];
+        $.ajax({
+            url: "getSighting.php?type=pokemon",
+            context: document.body
+        }).done(function(data) {
+            var obj = JSON.parse(data);
+            $.each(obj, function(k, v) {
+                var s = [parseFloat(v[0]),parseFloat(v[1]), parseInt(v[2])];
+                dataPoints.push(s);
+            });
+            placeDataPoints(dataPoints);
+        });
+    }
+
+    /**
+     * Draw the actual circle area
+     */
+    function drawCircle(point, radius, dir) {
+        var d2r = Math.PI / 180;   // degrees to radians
+        var r2d = 180 / Math.PI;   // radians to degrees
+        var earthsradius = 3963; // 3963 is the radius of the earth in miles
+
+        var points = 32;
+
+        // find the raidus in lat/lon
+        var rlat = (radius / earthsradius) * r2d;
+        var rlng = rlat / Math.cos(point.lat() * d2r);
+
+        var extp = [];
+        if (dir==1) {
+            var start=0;
+            var end=points+1; // one extra here makes sure we connect the path
+        } else {
+            var start=points+1;
+            var end=0;
+        }
+        for (var i=start; (dir==1 ? i < end : i > end); i=i+dir)
+        {
+            var theta = Math.PI * (i / (points/2));
+            ey = point.lng() + (rlng * Math.cos(theta)); // center a + radius x * cos(theta)
+            ex = point.lat() + (rlat * Math.sin(theta)); // center b + radius y * sin(theta)
+            extp.push(new google.maps.LatLng(ex, ey));
+        }
+        return extp;
+    }
+
+    /**
+     * Set the pokemon select box options
+    * */
+    function setPokemon() {
+        $.ajax({
+            url: "getSelectValues.php?type=pokemon",
+            context: document.body
+        }).done(function(data) {
+            var obj = JSON.parse(data);
+            $.each(obj, function(k, v) {
+                $('#add-pokemon').append($("<option></option>").attr("value",v[0]).text(v[1]));
+            });
+        });
+    }
+
+    /**
+     * Save a sighting to the database
+     */
+    function sendSighting(){
+        var pokemon = $('#add-pokemon').val();
+        var area = $('#add-area').val();
+        var latitude = $('#add-latitude').val();
+        var longitude = $('#add-longitude').val();
+        var name = $('#add-name').val();
+
+        // VALIDATE THE INPUTS
+        var valid = true;
+        if(pokemon === null){
+            $('#add-pokemon').parent().addClass('has-error');
+            valid = false;
+        } else {
+            $('#add-pokemon').parent().removeClass('has-error');
+        }
+        if(area === null){
+            $('#add-area').parent().addClass('has-error');
+            valid = false;
+        } else {
+            $('#add-area').parent().removeClass('has-error');
+        }
+        if(latitude.replace(/\s/g, "").length <= 0){
+            $('#add-latitude').parent().addClass('has-error');
+            valid = false;
+        } else {
+            $('#add-latitude').parent().removeClass('has-error');
+        }
+        if(longitude.replace(/\s/g, "").length <= 0){
+            $('#add-longitude').parent().addClass('has-error');
+            valid = false;
+        } else {
+            $('#add-longitude').parent().removeClass('has-error');
+        }
+        if(name.replace(/\s/g, "").length <= 0){
+            name = 'Anonymous';
+        }
+
+        // SEND VALID DATA TO DB
+        if(valid){
+            $.ajax({
+                method: 'POST',
+                url: "setSighting.php",
+                data: {
+                    pokemon: pokemon,
+                    area: area,
+                    latitude: latitude,
+                    longitude: longitude,
+                    name: name
+                }
+            }).done(function(data) {
+                var obj = JSON.parse(data);
+                if(obj === 'success'){
+                    // SHOW SUCCESS
+                    $('#add-wrapper').hide();
+                    $('#add-success').show();
+
+                    // CLEAR OUT THE INPUTS
+                    $('#add-pokemon').val(null);
+                    $('#add-area').val(null);
+                    $('#add-latitude').val('');
+                    $('#add-longitude').val('');
+
+                    // EXCEPT FOR NAME IF IT'S NOT ANONYMOUS
+                    $('#add-name').val() === 'Anonymous' ? $('#add-name').val('') : null; // for future use?
+
+                    location.reload(); // TODO: Handle this a bit better, reload data instead of page
+                } else {
+                    console.log('error!', obj);
+                    // SHOW ERROR
+                    $('#add-wrapper').hide();
+                    $('#add-success').show();
+                }
+            });
+        }
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiFEtjVXiqBMGa_ZNtqUywQF8c2ySCHUQ&callback=initMap"></script>
+
+</body>
+</html>
