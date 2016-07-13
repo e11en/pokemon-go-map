@@ -15,7 +15,7 @@ Still To Do
 
 How To Make It Work
 ===
-Create a config.js/php file in the root of the site and fill the $GLOBALS['config'] array with the following, you
+Create a config.js and config.php file in the root of the site and fill the ```$GLOBALS['config']``` array with the following, you
 can also see the config.example.js/php files
 
 PHP
