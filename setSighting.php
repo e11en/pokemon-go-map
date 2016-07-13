@@ -21,8 +21,9 @@ function setSighting(){
         $stmt->bindParam(':longitude', $longitude);
         $stmt->bindParam(':name', $name);
         $stmt->execute();
+        $id = $pdo->lastInsertId();
 
-        return 1;
+        return $id;
     } catch (Exception $e) {
         return $e->getMessage();
     }

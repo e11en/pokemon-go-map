@@ -93,9 +93,22 @@ html, body {
     cursor: pointer;
 }
 
+/*#add-wrapper,*/
 #add-success,
 #add-error{
     display: none;
+}
+
+.yellow {
+    color: #EEE60F;
+}
+
+.blue {
+    color: #283BEE;
+}
+
+.red {
+    color: #FF0000;
 }
 
 /* MOBILE QUERIES */
