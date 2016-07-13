@@ -201,8 +201,6 @@
 
         $('#filter-pokemon').on('change', function(e){
             var choice = $(this).val();
-            console.log(choice);
-
             initMap();
             if(choice > 0){
                 getDataPoints('pokemon&id='+choice);
