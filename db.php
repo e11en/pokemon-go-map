@@ -2,7 +2,7 @@
 include_once('config.php');
 
 // Needed to work on the live server
-header('Access-Control-Allow-Origin: '.$GLOBALS['config']['URLHOST']);
+header('Access-Control-Allow-Origin: http://pokemon.ellenlangelaar.nl');
 
 
 /**
