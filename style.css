@@ -93,7 +93,8 @@ html, body {
     cursor: pointer;
 }
 
-/*#add-wrapper,*/
+/*#main-wrapper,*/
+#add-wrapper,
 #add-success,
 #add-error{
     display: none;
@@ -109,6 +110,19 @@ html, body {
 
 .red {
     color: #FF0000;
+}
+
+#legenda {
+    position: fixed;
+    bottom: 2em;
+    left: 0;
+    background-color: #ffffff;
+    opacity: 0.8;
+    border: solid 2px #001949;
+}
+
+#legenda table {
+    margin-bottom: 0;
 }
 
 /* MOBILE QUERIES */
