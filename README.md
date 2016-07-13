@@ -15,19 +15,34 @@ Still To Do
 
 How To Make It Work
 ===
-Create a db.php file in the root of the site and make a function that returns a PDO object. 
-A SQL file with the structure is also added.
-```
-function getPDO(){
-    try{
-        $db = new PDO('mysql:host=localhost;dbname=DBNAME', 'USERNAME', 'PASSWORD');
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+Create a config.js/php file in the root of the site and fill the $GLOBALS['config'] array with the following, you
+can also see the config.example.js/php files
 
-        return $db;
-    } catch(Exception $e) {
-        return $e->getMessage();
-    }
-}
+PHP
+=
+```
+$GLOBALS['config'] = [
+    // DATABASE
+    'DBHOST' => 'localhost',
+    'DBNAME' => 'database',
+    'DBUSER' => 'username',
+    'DBPASS' => 'password',
+
+    // URLS
+    'URLPHP' => 'http://example.com',
+    'URLHOST' => 'http://example.com'
+];
+
 ```
 
+JS
+=
+```
+var $GLOBALS = {
+    // URLS
+    'URLPHP' : 'http://example.com',
+    'URLHOST': 'http://example.com'
+};
+
+
+```
