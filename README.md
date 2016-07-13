@@ -19,7 +19,7 @@ Create a config.js/php file in the root of the site and fill the $GLOBALS['confi
 can also see the config.example.js/php files
 
 PHP
-=
+====
 ```
 $GLOBALS['config'] = [
     // DATABASE
@@ -36,7 +36,7 @@ $GLOBALS['config'] = [
 ```
 
 JS
-=
+====
 ```
 var $GLOBALS = {
     // URLS
