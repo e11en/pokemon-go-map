@@ -29,7 +29,6 @@ $GLOBALS['config'] = [
     'DBPASS' => 'password',
 
     // URLS
-    'URLPHP' => 'http://example.com',
     'URLHOST' => 'http://example.com'
 ];
 
