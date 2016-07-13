@@ -1,20 +1,30 @@
 <?php
-
 include_once('db.php');
 
-if(isset($_POST['pokemon']) && isset($_POST['area']) && isset($_POST['latitude']) && isset($_POST['longitude']) && isset($_POST['name'])){
+if(isset($_POST['pokemon']) && isset($_POST['type']) && isset($_POST['latitude']) && isset($_POST['longitude']) && isset($_POST['name'])){
+    echo json_encode(setSighting());
+}
+
+function setSighting(){
     try{
         $pdo = getPDO();
-        $stmt = $pdo->prepare("INSERT INTO sighting (pokemonId, area, latitude, longitude, name) VALUES (:pokemonId, :area, :latitude, :longitude, :name)");
-        $stmt->bindParam(':pokemonId', intval($_POST['pokemon']));
-        $stmt->bindParam(':area', intval($_POST['area']));
-        $stmt->bindParam(':latitude', floatval($_POST['latitude']));
-        $stmt->bindParam(':longitude', floatval($_POST['longitude']));
-        $stmt->bindParam(':name', $_POST['name']);
+        $stmt = $pdo->prepare("INSERT INTO sighting (pokemonId, type, latitude, longitude, name) VALUES (:pokemonId, :type, :latitude, :longitude, :name)");
+        $pokemon = intval($_POST['pokemon']);
+        $type = intval($_POST['type']);
+        $latitude = floatval($_POST['latitude']);
+        $longitude = floatval($_POST['longitude']);
+        $name = $_POST['name'];
+
+        $stmt->bindParam(':pokemonId', $pokemon);
+        $stmt->bindParam(':type', $type);
+        $stmt->bindParam(':latitude', $latitude);
+        $stmt->bindParam(':longitude', $longitude);
+        $stmt->bindParam(':name', $name);
         $stmt->execute();
-        echo json_encode('success');
+
+        return 1;
     } catch (Exception $e) {
-        echo json_encode($e->getMessage());
+        return $e->getMessage();
     }
 }
 

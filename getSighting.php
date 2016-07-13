@@ -1,5 +1,4 @@
 <?php
-
 include_once('db.php');
 
 if(isset($_GET['type'])){
@@ -19,14 +18,12 @@ function getSightings(){
         $sql = 'SELECT * FROM sighting';
         $result = [];
         foreach ($pdo->query($sql) as $row) {
-            $result[] = [$row['latitude'], $row['longitude'], $row['area']];
+            $result[] = [$row['latitude'], $row['longitude'], $row['type']];
         }
 
         return $result;
     } catch (Exception $e) {
-        return [
-            'error!' , $e->getMessage()
-        ];
+        return [];
     }
 }
 

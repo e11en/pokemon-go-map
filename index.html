@@ -27,23 +27,16 @@
 <div id="menu">
     <div id="menu-close"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
     <div id="add-wrapper">
-        <h4>Add a Pokémon</h4>
+        <h4>Add a location</h4>
         <hr class="no-margin-top">
         <table class="table table-bordered">
             <tr>
                 <td>
                     <select id="add-pokemon" title="pokemon" class="form-control">
                         <option disabled selected>Pokémon</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <select id="add-area" title="radius" class="form-control">
-                        <option disabled selected>Area</option>
-                        <option value="1"> &#xf1b0; &#xf1b0; &#xf1b0; (150 - 200 meter)</option>
-                        <option value="2"> &#xf1b0; &#xf1b0; (100 - 150 meter)</option>
-                        <option value="3"> &#xf1b0; (0 - 100 meter)</option>
+                        <option value="pokestop">Pokestop</option>
+                        <option value="gym">Gym</option>
+                        <option disabled>-------</option>
                     </select>
                 </td>
             </tr>
@@ -71,13 +64,14 @@
     </div>
 
     <div id="add-success">
-        <h2>Pokémon is added!</h2>
+        <h2>Added successful!</h2>
         <button class="btn btn-primary" id="btn-add-pokemon"><i class="fa fa-repeat" aria-hidden="true"></i> Add another</button>
     </div>
 
     <div id="add-error">
         <h2>Oops!</h2>
         <h3>There was an error.</h3>
+        <button class="btn btn-primary" onclick="location.reload()"><i class="fa fa-repeat" aria-hidden="true"></i> Reload</button>
     </div>
 
     <div id="trademark">
@@ -90,6 +84,9 @@
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script>
+    //var externUrl = '';
+    var externUrl = 'http://pokemon-apeldoorn.esy.es/';
+
     $(document).ready(function() {
         // CLICK EVENT TO OPEN THE MOBILE MENU
         $('#menu-open').click(function(e){
@@ -146,19 +143,17 @@
         for(i = 0; i < data.length; i++) {
             // SET VARIABLES
             var type = data[i][2];
-            var radius = type === 1 ? 0.2 : type === 2 ? 0.15 : 0.1;
-            var colour = type === 1 ? '#FF0000' : type === 2 ? '#EEE60F' : '#283BEE';
-            var opacity = type !== 3 ? 0.35 : 0.7;
+            var radius = type === 1 ? 0.02 : type === 2 ? 0.01 : 0.01;
 
             // CREATE A NEW CIRCLE ON THE MAP
             var circle = new google.maps.Polygon({
                 map: map,
                 paths: [drawCircle(new google.maps.LatLng(data[i][0],data[i][1]), radius, 1)],
-                strokeColor: "#FFFFFF",
-                strokeOpacity: 0,
-                strokeWeight: 0,
-                fillColor: colour,
-                fillOpacity: opacity
+                strokeColor: type === 1 ? "FF0000" : type === 2 ? "#162C57" : "#B3AD28",
+                strokeOpacity: 1,
+                strokeWeight: type === 1 ? 0 : 2,
+                fillColor: type === 1 ? '#FF0000' : type === 3 ? '#EEE60F' : '#283BEE',
+                fillOpacity: type === 1 ? 0.35 : 0.7
             });
 
             // ADD A CLICK EVENT SO OTHER POKEMONS CAN BE ADDED ON TOP OF IT
@@ -175,7 +170,7 @@
     function getDataPoints() {
         var dataPoints = [];
         $.ajax({
-            url: "getSighting.php?type=pokemon",
+            url: externUrl+"getSighting.php?type=pokemon",
             context: document.body
         }).done(function(data) {
             var obj = JSON.parse(data);
@@ -224,7 +219,7 @@
     * */
     function setPokemon() {
         $.ajax({
-            url: "getSelectValues.php?type=pokemon",
+            url: externUrl+"getSelectValues.php?type=pokemon",
             context: document.body
         }).done(function(data) {
             var obj = JSON.parse(data);
@@ -239,10 +234,18 @@
      */
     function sendSighting(){
         var pokemon = $('#add-pokemon').val();
-        var area = $('#add-area').val();
+        var type = 1;
         var latitude = $('#add-latitude').val();
         var longitude = $('#add-longitude').val();
         var name = $('#add-name').val();
+
+        if(pokemon === 'pokestop'){
+            type = 2;
+            pokemon = 0;
+        } else if(pokemon === 'gym'){
+            type = 3;
+            pokemon = 0;
+        }
 
         // VALIDATE THE INPUTS
         var valid = true;
@@ -251,12 +254,6 @@
             valid = false;
         } else {
             $('#add-pokemon').parent().removeClass('has-error');
-        }
-        if(area === null){
-            $('#add-area').parent().addClass('has-error');
-            valid = false;
-        } else {
-            $('#add-area').parent().removeClass('has-error');
         }
         if(latitude.replace(/\s/g, "").length <= 0){
             $('#add-latitude').parent().addClass('has-error');
@@ -278,42 +275,52 @@
         if(valid){
             $.ajax({
                 method: 'POST',
-                url: "setSighting.php",
+                url: externUrl+"setSighting.php",
                 data: {
                     pokemon: pokemon,
-                    area: area,
+                    type: type,
                     latitude: latitude,
                     longitude: longitude,
                     name: name
                 }
             }).done(function(data) {
                 var obj = JSON.parse(data);
-                if(obj === 'success'){
+                if(obj === 1){
                     // SHOW SUCCESS
                     $('#add-wrapper').hide();
                     $('#add-success').show();
 
                     // CLEAR OUT THE INPUTS
                     $('#add-pokemon').val(null);
-                    $('#add-area').val(null);
+                    $('#add-type').val(null);
                     $('#add-latitude').val('');
                     $('#add-longitude').val('');
 
                     // EXCEPT FOR NAME IF IT'S NOT ANONYMOUS
                     $('#add-name').val() === 'Anonymous' ? $('#add-name').val('') : null; // for future use?
 
-                    location.reload(); // TODO: Handle this a bit better, reload data instead of page
+                    initMap();
+                    //location.reload(); // TODO: Handle this a bit better, reload data instead of page
                 } else {
                     console.log('error!', obj);
                     // SHOW ERROR
                     $('#add-wrapper').hide();
-                    $('#add-success').show();
+                    $('#add-error').show();
                 }
             });
         }
     }
 </script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiFEtjVXiqBMGa_ZNtqUywQF8c2ySCHUQ&callback=initMap"></script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+    ga('create', 'UA-37182945-2', 'auto');
+    ga('send', 'pageview');
+
+</script>
 </body>
 </html>
