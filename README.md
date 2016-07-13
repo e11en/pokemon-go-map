@@ -1,6 +1,8 @@
 # Pokemon GO Map
 An interactive map for pokemon GO
 
+![screenshot of the app](https://raw.githubusercontent.com/e11en/pokemon-go-map/master/screenshot-1.png)
+
 Still To Do
 ===
 - [ ] Create filtering of different Pokemon species
