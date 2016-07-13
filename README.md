@@ -5,8 +5,8 @@ An interactive map for pokemon GO
 
 Still To Do
 ===
-- [ ] Create filtering of different Pokemon species
-- [ ] Filtering for pokestops and gyms
+- [ ] Show amount of pokemons when filtering
+- [ ] Show amount of pokemons per type in total
 - [ ] Nice markers for pokestops and gyms
 - [ ] Edit a pokestop or gym
 - [ ] Indicate if a pokestop has a lure or not
