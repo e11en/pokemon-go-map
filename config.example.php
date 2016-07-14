@@ -8,7 +8,7 @@ $GLOBALS['config'] = [
     'DBPASS' => 'password',
 
     // URLS
-    'URLHOST' => 'http://example.com'
+    'URLHOST' => 'http://example.com/'
 ];
 
 
