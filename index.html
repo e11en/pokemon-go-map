@@ -255,14 +255,14 @@
                     icon: 'img/markers/main.png'
                 });
             }
-        } else {
-            //type == 1 ? console.log(type + ' : ' +  pokemon) : null;
-            //var icon = type === 1 ? '/img/pokemon/'+pokemon+'.png' : type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
+        } else if(type !== 1){
+            type == 1 ? console.log(type + ' : ' +  pokemon) : null;
+            var icon = type === 1 ? '/img/pokemon/'+pokemon.replace('#', '')+'.png' : type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
 
             var temp = new google.maps.Marker({
                 position: location,
                 map: map,
-                icon: '/img/pokemon/#001.png'
+                icon: icon
             });
             locations.push(temp);
         }

@@ -54,6 +54,11 @@ function getSightings($type = null, $id = null){
     }
 }
 
+/**
+ * Get Pokedex by Pokemon Id
+ * @param $id
+ * @return int
+ */
 function getPokedexById($id){
     try{
         $pdo = getPDO();
