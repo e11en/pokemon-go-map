@@ -91,15 +91,17 @@ function getPokedexById($id){
 function getRecentActivity(){
     try{
         $pdo = getPDO();
-        $sql = 'SELECT * FROM sighting ORDER BY id DESC LIMIT 5';
+        $sql = 'SELECT * FROM sighting ORDER BY id DESC LIMIT 3';
         $stmt = $pdo->prepare($sql);
 
         $stmt->execute();
         $rows = $stmt->fetchAll();
         $result = [];
         foreach ($rows as $row) {
-            $timeStamp = convertTime($row['createdAt']);
-            $result[] = [$row['type'], $row['name'], $timeStamp];
+            $when = convertTime($row['createdAt']);
+            $time =  '<p class="small">'.date("H:i", $row['createdAt']).'</p>';
+
+            $result[] = [$row['type'], $row['name'], $when, $time];
         }
 
         return $result;
@@ -120,7 +122,7 @@ function convertTime($unixTime){
     if(justNow($date)) {
         return 'Just now';
     } else if(today($date)){
-        return 'Today <p class="small">'.getPartOfDT('H:i', $date).'</p>';
+        return 'Today ';
     } else if(yesterday($date)){
         return 'Yesterday';
     }

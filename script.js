@@ -76,7 +76,7 @@ $(document).ready(function() {
     getDataPoints('all');
 
     // GET RECENT ACTIVITY
-    //getRecentActivity();
+    getRecentActivity();
 });
 
 
@@ -337,9 +337,8 @@ function getRecentActivity() {
     }).done(function(data) {
         var obj = JSON.parse(data);
         $.each(obj, function(k, v) {
-            console.log(v);
             var type = v[0] === 1 ? 'Pokemon' : v[0] === 2 ? 'Pokestop' : 'Gym';
-            $('#recent-activity').append('<tr><td>'+v[1]+'</td><td>'+type+'</td><td>'+v[2]+'</td></tr>');
+            $('#recent-activity').append('<tr class="small"><td>'+v[1]+" "+v[3]+'</td><td>'+type+'</td><td>'+v[2]+'</td></tr>');
         });
     });
 }
