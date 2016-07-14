@@ -14,14 +14,15 @@ function setSighting(){
         $latitude = floatval($_POST['latitude']);
         $longitude = floatval($_POST['longitude']);
         $name = $_POST['name'];
+        $time = time();
 
         $stmt->bindParam(':pokemonId', $pokemon);
         $stmt->bindParam(':type', $type);
         $stmt->bindParam(':latitude', $latitude);
         $stmt->bindParam(':longitude', $longitude);
         $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':update', time());
-        $stmt->bindParam(':create', time());
+        $stmt->bindParam(':update', $time);
+        $stmt->bindParam(':create', $time);
         $stmt->execute();
         $id = $pdo->lastInsertId();
 
