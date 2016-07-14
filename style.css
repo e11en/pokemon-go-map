@@ -125,6 +125,10 @@ html, body {
     margin-bottom: 0;
 }
 
+#recent-activity {
+    font-size: 0.9em;
+}
+
 /* MOBILE QUERIES */
 @media (max-width: 460px) {
     #menu {
