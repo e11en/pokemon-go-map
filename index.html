@@ -248,16 +248,20 @@
             if ( marker) {
                 marker.setPosition(location);
             } else {
-                console.log(icon);
                 marker = new google.maps.Marker({
                     position: location,
                     map: map,
                     icon: 'img/markers/main.png'
                 });
             }
-        } else if(type !== 1){
-            type == 1 ? console.log(type + ' : ' +  pokemon) : null;
+        } else {
             var icon = type === 1 ? '/img/pokemon/'+pokemon.replace('#', '')+'.png' : type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
+            if(type === 1){
+                icon = new google.maps.MarkerImage(icon,
+                        new google.maps.Size(50, 50),
+                        new google.maps.Point(0, 0),
+                        new google.maps.Point(20, 20));
+            }
 
             var temp = new google.maps.Marker({
                 position: location,
