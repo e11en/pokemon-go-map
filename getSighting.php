@@ -45,12 +45,26 @@ function getSightings($type = null, $id = null){
         $rows = $stmt->fetchAll();
         $result = [];
         foreach ($rows as $row) {
-            $result[] = [$row['latitude'], $row['longitude'], $row['type']];
+            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokedexById($row['pokemonId'])];
         }
 
         return $result;
     } catch (Exception $e) {
         return [];
+    }
+}
+
+function getPokedexById($id){
+    try{
+        $pdo = getPDO();
+        $sql = 'SELECT pokedex FROM pokemon WHERE id = :id LIMIT 1';
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        return $stmt->fetch()[0];
+    } catch (Exception $e) {
+        return 0;
     }
 }
 

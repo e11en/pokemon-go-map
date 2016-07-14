@@ -222,6 +222,7 @@
      */
     var map;
     var marker;
+    var locations = [];
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 52.211840, lng: 5.971564},
@@ -233,7 +234,7 @@
         google.maps.event.addListener(map, 'click', function(args) {
             $('#add-latitude').val(args.latLng.lat());
             $('#add-longitude').val(args.latLng.lng());
-            placeMarker({lat: args.latLng.lat(), lng: args.latLng.lng()});
+            placeMarker({lat: args.latLng.lat(), lng: args.latLng.lng()}, null, null, true);
         });
 
         marker = null;
@@ -242,15 +243,30 @@
     /**
      * Place a marker on the screen to show where you clicked
      */
-    function placeMarker(location) {
-        if ( marker ) {
-            marker.setPosition(location);
+    function placeMarker(location, type, pokemon, newLocationMarker) {
+        if(newLocationMarker){
+            if ( marker) {
+                marker.setPosition(location);
+            } else {
+                console.log(icon);
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon: 'img/markers/main.png'
+                });
+            }
         } else {
-            marker = new google.maps.Marker({
+            //type == 1 ? console.log(type + ' : ' +  pokemon) : null;
+            //var icon = type === 1 ? '/img/pokemon/'+pokemon+'.png' : type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
+
+            var temp = new google.maps.Marker({
                 position: location,
-                map: map
+                map: map,
+                icon: '/img/pokemon/#001.png'
             });
+            locations.push(temp);
         }
+
     }
 
     /**
@@ -273,6 +289,8 @@
                 fillOpacity: type === 1 ? 0.35 : 0.7
             });
 
+            placeMarker({lat: data[i][0], lng: data[i][1]}, type, data[i][3]);
+
             // ADD A CLICK EVENT SO OTHER POKEMONS CAN BE ADDED ON TOP OF IT
             google.maps.event.addListener(circle, 'click', function(args) {
                 $('#add-latitude').val(args.latLng.lat());
@@ -292,7 +310,7 @@
         }).done(function(data) {
             var obj = JSON.parse(data);
             $.each(obj, function(k, v) {
-                var s = [parseFloat(v[0]),parseFloat(v[1]), parseInt(v[2])];
+                var s = [parseFloat(v[0]),parseFloat(v[1]), parseInt(v[2]), v[3]];
                 dataPoints.push(s);
             });
             placeDataPoints(dataPoints);
