@@ -7,7 +7,7 @@ Still To Do
 ===
 - [ ] Show amount of pokemons when filtering
 - [ ] Show amount of pokemons per type in total
-- [ ] Nice markers for pokestops and gyms
+- [ ] Clean up pokemon images
 - [ ] Edit a pokestop or gym
 - [ ] Indicate if a pokestop has a lure or not
 - [ ] Optimize the loading of the map
