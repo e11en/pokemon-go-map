@@ -12,7 +12,7 @@ Still To Do
 - [ ] Edit a pokestop or gym
 - [ ] Indicate if a pokestop has a lure or not
 - [ ] Optimize the loading of the map
-
+- [ ] Translation of frontend
 
 How To Make It Work
 ===
