@@ -3,6 +3,8 @@
  * ALL THE PHP FUNCTIONS ARE PRESENT IN THIS DOCUMENT FOR GENERAL USE
  */
 
+include_once('db.php');
+
 // GETTERS
 /**
  * Get all pokemon from the database

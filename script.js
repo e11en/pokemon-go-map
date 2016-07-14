@@ -42,7 +42,7 @@ $(document).ready(function() {
         var id = $('#setSighting-id').val();
         if(id > 0){
             $.ajax({
-                url: $GLOBALS.URLPHP+"unsetSighting.php",
+                url: $GLOBALS.URLPHP+"php/unsetSighting.php",
                 type: "POST",
                 data: {id : id}
             }).done(function(data) {
@@ -182,7 +182,7 @@ function placeDataPoints(data){
 function getDataPoints(type) {
     var dataPoints = [];
     $.ajax({
-        url: $GLOBALS.URLPHP+"getSighting.php?type="+type,
+        url: $GLOBALS.URLPHP+"php/getSighting.php?type="+type,
         context: document.body
     }).done(function(data) {
         var obj = JSON.parse(data);
@@ -231,7 +231,7 @@ function drawCircle(point, radius, dir) {
  * */
 function setPokemon() {
     $.ajax({
-        url: $GLOBALS.URLPHP+"getSelectValues.php?type=pokemon",
+        url: $GLOBALS.URLPHP+"php/getSelectValues.php?type=pokemon",
         context: document.body
     }).done(function(data) {
         var obj = JSON.parse(data);
@@ -288,7 +288,7 @@ function sendSighting(){
     if(valid){
         $.ajax({
             method: 'POST',
-            url: $GLOBALS.URLPHP+"setSighting.php",
+            url: $GLOBALS.URLPHP+"php/setSighting.php",
             data: {
                 pokemon: pokemon,
                 type: type,
@@ -333,7 +333,7 @@ function sendSighting(){
 function getRecentActivity() {
     $.ajax({
         method: 'POST',
-        url: $GLOBALS.URLPHP+"getRecentActivity.php"
+        url: $GLOBALS.URLPHP+"php/getRecentActivity.php"
     }).done(function(data) {
         var obj = JSON.parse(data);
         $.each(obj, function(k, v) {
