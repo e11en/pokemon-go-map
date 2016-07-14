@@ -299,6 +299,7 @@
             google.maps.event.addListener(circle, 'click', function(args) {
                 $('#add-latitude').val(args.latLng.lat());
                 $('#add-longitude').val(args.latLng.lng());
+                placeMarker({lat: args.latLng.lat(), lng: args.latLng.lng()}, null, null, true);
             });
         }
     }
