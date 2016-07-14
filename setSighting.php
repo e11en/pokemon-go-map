@@ -8,7 +8,7 @@ if(isset($_POST['pokemon']) && isset($_POST['type']) && isset($_POST['latitude']
 function setSighting(){
     try{
         $pdo = getPDO();
-        $stmt = $pdo->prepare("INSERT INTO sighting (pokemonId, type, latitude, longitude, name) VALUES (:pokemonId, :type, :latitude, :longitude, :name)");
+        $stmt = $pdo->prepare("INSERT INTO sighting (pokemonId, type, latitude, longitude, name, updatedAt, createdAt) VALUES (:pokemonId, :type, :latitude, :longitude, :name, :update, :create)");
         $pokemon = intval($_POST['pokemon']);
         $type = intval($_POST['type']);
         $latitude = floatval($_POST['latitude']);
@@ -20,6 +20,8 @@ function setSighting(){
         $stmt->bindParam(':latitude', $latitude);
         $stmt->bindParam(':longitude', $longitude);
         $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':update', time());
+        $stmt->bindParam(':create', time());
         $stmt->execute();
         $id = $pdo->lastInsertId();
 
