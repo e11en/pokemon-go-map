@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Gegenereerd op: 13 jul 2016 om 09:14
+-- Gegenereerd op: 15 jul 2016 om 07:24
 -- Serverversie: 5.6.30-0ubuntu0.14.04.1
 -- PHP-versie: 5.5.9-1ubuntu4.17
 
@@ -44,7 +44,9 @@ CREATE TABLE `sighting` (
   `type` int(11) NOT NULL,
   `latitude` varchar(200) NOT NULL,
   `longitude` varchar(200) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `name` varchar(100) NOT NULL,
+  `updatedAt` int(11) NOT NULL,
+  `createdAt` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -76,7 +78,7 @@ ALTER TABLE `pokemon`
 -- AUTO_INCREMENT voor een tabel `sighting`
 --
 ALTER TABLE `sighting`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=231;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
