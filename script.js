@@ -1,5 +1,5 @@
 // GLOBALS
-var infowindow;
+var infoWindows = [];
 var map;
 var marker;
 var locations = [];
@@ -117,7 +117,7 @@ function initMap() {
  */
 function placeMarker(data, newLocationMarker) {
     if(newLocationMarker){
-        infowindow.close();
+        closeAllInfoWindows();
         if ( marker) {
             marker.setPosition(data.location);
         } else {
@@ -128,7 +128,7 @@ function placeMarker(data, newLocationMarker) {
             });
         }
     } else {
-        var icon = data.type === 1 ? '/img/pokemon/'+data.pokemon.replace('#', '')+'.png' : data.type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
+        var icon = data.type === 1 ? '/img/pokemon/'+data.pokemon['pokedex'].replace('#', '')+'.png' : data.type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
         if(data.type === 1){
             icon = new google.maps.MarkerImage(icon,
                 new google.maps.Size(50, 50),
@@ -143,26 +143,44 @@ function placeMarker(data, newLocationMarker) {
         });
         locations.push(temp);
 
-        infoWindowForMarker(temp);
+        infoWindowForMarker(temp, data);
     }
 }
 
-function infoWindowForMarker(marker, pokemon){
-    var contentString = '<div id="content">'+
+/**
+ * Make sure all the info windows are closed
+ */
+function closeAllInfoWindows(){
+    for(i = 0; i < infoWindows.length; i++){
+        infoWindows[i].close();
+    }
+}
+
+function infoWindowForMarker(marker, data){
+    var contentHeading = data.pokemon['pokedex']+" "+data.pokemon['name'];
+    var contentString = '<div id="content" class="infoWindow">'+
         '<div id="siteNotice">'+
         '</div>'+
-        '<h1 id="firstHeading" class="firstHeading">Pokemon Name</h1>'+
+        '<h1 id="firstHeading" class="firstHeading">'+contentHeading+'</h1>'+
         '<div id="bodyContent">'+
-        '<p>A picture of pokemon and then the thumb up and down buttons plus the amount of votes</p>'+
-        '<p>Added 29-07-2016 by Anonymous</p>'+
+            '<p>Added '+data.createdAt+' by '+data.creator+'</p>'+
+            '<div class="pull-left">' +
+                '<button class="btn btn-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></button>'+
+                '<h3>'+data.votes.up+'</h3>'+
+            '</div><div class="pull-right">'+
+                '<button class="btn btn-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></button>'+
+                '<h3>'+data.votes.down+'</h3>'+
+            '</div>' +
         '</div>'+
-        '</div>';
+    '</div>';
 
-    infowindow = new google.maps.InfoWindow({
+    var infowindow = new google.maps.InfoWindow({
         content: contentString
     });
+    infoWindows.push(infowindow);
 
     marker.addListener('click', function() {
+        closeAllInfoWindows();
         infowindow.open(map, marker);
     });
 }
@@ -209,7 +227,7 @@ function getDataPoints(type) {
     }).done(function(data) {
         var obj = JSON.parse(data);
         $.each(obj, function(k, v) {
-            var o = {location: {lat: parseFloat(v[0]), lng: parseFloat(v[1])}, type: parseInt(v[2]), pokemon: v[3], votes: {up:v[4],down:v[5]}, createdAt: v[6]};
+            var o = {location: {lat: parseFloat(v[0]), lng: parseFloat(v[1])}, type: parseInt(v[2]), pokemon: v[3], votes: {up:v[4],down:v[5]}, createdAt: v[6], creator: v[7]};
             dataPoints.push(o);
         });
         placeDataPoints(dataPoints);

@@ -56,7 +56,7 @@ function getSightings($type = null, $id = null){
         $rows = $stmt->fetchAll();
         $result = [];
         foreach ($rows as $row) {
-            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokedexById($row['pokemonId']), $row['voteUp'], $row['voteDown'], date("Y-m-d", $row['createdAt'])];
+            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokemonId($row['pokemonId']), $row['voteUp'], $row['voteDown'], date("Y-m-d", $row['createdAt']), $row['name']];
         }
 
         return $result;
@@ -70,15 +70,15 @@ function getSightings($type = null, $id = null){
  * @param $id
  * @return int
  */
-function getPokedexById($id){
+function getPokemonId($id){
     try{
         $pdo = getPDO();
-        $sql = 'SELECT pokedex FROM pokemon WHERE id = :id LIMIT 1';
+        $sql = 'SELECT pokedex,name FROM pokemon WHERE id = :id LIMIT 1';
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
 
-        return $stmt->fetch()[0];
+        return $stmt->fetch();
     } catch (Exception $e) {
         return 0;
     }
