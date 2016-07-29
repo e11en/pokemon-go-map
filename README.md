@@ -6,6 +6,8 @@ An interactive map for pokemon GO.
 
 Still To Do
 ===
+- [ ] Make map reload instead of reloading page
+- [ ] Map stay at the same zoom level and location after adding
 - [ ] Show amount of pokemons when filtering
 - [ ] Show amount of pokemons per type in total
 - [ ] Clean up pokemon images
