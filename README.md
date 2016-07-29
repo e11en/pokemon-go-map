@@ -30,9 +30,6 @@ $GLOBALS['config'] = [
     'DBNAME' => 'database',
     'DBUSER' => 'username',
     'DBPASS' => 'password',
-
-    // URLS
-    'URLHOST' => 'http://example.com/'
 ];
 
 ```
@@ -41,9 +38,6 @@ JS
 ====
 ```
 var $GLOBALS = {
-    // URLS
-    'URLPHP' : 'http://example.com/',
-    'URLHOST': 'http://example.com/',
     'GA_ID': 'GOOGLE ANALYTICS ID'
 };
 
