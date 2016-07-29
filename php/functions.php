@@ -56,7 +56,7 @@ function getSightings($type = null, $id = null){
         $rows = $stmt->fetchAll();
         $result = [];
         foreach ($rows as $row) {
-            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokedexById($row['pokemonId'])];
+            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokedexById($row['pokemonId']), $row['voteUp'], $row['voteDown'], date("Y-m-d", $row['createdAt'])];
         }
 
         return $result;

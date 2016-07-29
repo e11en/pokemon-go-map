@@ -1,3 +1,9 @@
+// GLOBALS
+var infowindow;
+var map;
+var marker;
+var locations = [];
+
 $(document).ready(function() {
     // CLICK EVENT TO OPEN THE MOBILE MENU
     $('#menu-open').click(function(e){
@@ -80,9 +86,6 @@ $(document).ready(function() {
 /**
  * Init the map
  */
-var map;
-var marker;
-var locations = [];
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 52.211840, lng: 5.971564},
@@ -94,7 +97,7 @@ function initMap() {
     google.maps.event.addListener(map, 'click', function(args) {
         $('#add-latitude').val(args.latLng.lat());
         $('#add-longitude').val(args.latLng.lng());
-        placeMarker({lat: args.latLng.lat(), lng: args.latLng.lng()}, null, null, true);
+        placeMarker({location:{lat: args.latLng.lat(), lng: args.latLng.lng()}}, true);
     });
 
     marker = null;
@@ -112,20 +115,21 @@ function initMap() {
 /**
  * Place a marker on the screen to show where you clicked
  */
-function placeMarker(location, type, pokemon, newLocationMarker) {
+function placeMarker(data, newLocationMarker) {
     if(newLocationMarker){
+        infowindow.close();
         if ( marker) {
-            marker.setPosition(location);
+            marker.setPosition(data.location);
         } else {
             marker = new google.maps.Marker({
-                position: location,
+                position: data.location,
                 map: map,
                 icon: 'img/markers/main.png'
             });
         }
     } else {
-        var icon = type === 1 ? '/img/pokemon/'+pokemon.replace('#', '')+'.png' : type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
-        if(type === 1){
+        var icon = data.type === 1 ? '/img/pokemon/'+data.pokemon.replace('#', '')+'.png' : data.type === 2 ? '/img/markers/pokestop.png' : '/img/markers/gym.png';
+        if(data.type === 1){
             icon = new google.maps.MarkerImage(icon,
                 new google.maps.Size(50, 50),
                 new google.maps.Point(0, 0),
@@ -133,13 +137,34 @@ function placeMarker(location, type, pokemon, newLocationMarker) {
         }
 
         var temp = new google.maps.Marker({
-            position: location,
+            position: data.location,
             map: map,
             icon: icon
         });
         locations.push(temp);
-    }
 
+        infoWindowForMarker(temp);
+    }
+}
+
+function infoWindowForMarker(marker, pokemon){
+    var contentString = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">Pokemon Name</h1>'+
+        '<div id="bodyContent">'+
+        '<p>A picture of pokemon and then the thumb up and down buttons plus the amount of votes</p>'+
+        '<p>Added 29-07-2016 by Anonymous</p>'+
+        '</div>'+
+        '</div>';
+
+    infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
 }
 
 /**
@@ -148,13 +173,13 @@ function placeMarker(location, type, pokemon, newLocationMarker) {
 function placeDataPoints(data){
     for(i = 0; i < data.length; i++) {
         // SET VARIABLES
-        var type = data[i][2];
+        var type = data[i].type;
         var radius = type === 1 ? 0.02 : type === 2 ? 0.01 : 0.01;
 
         // CREATE A NEW CIRCLE ON THE MAP
         var circle = new google.maps.Polygon({
             map: map,
-            paths: [drawCircle(new google.maps.LatLng(data[i][0],data[i][1]), radius, 1)],
+            paths: [drawCircle(new google.maps.LatLng(data[i].location), radius, 1)],
             strokeColor: type === 1 ? "FF0000" : type === 2 ? "#162C57" : "#B3AD28",
             strokeOpacity: 1,
             strokeWeight: type === 1 ? 0 : 2,
@@ -162,13 +187,13 @@ function placeDataPoints(data){
             fillOpacity: type === 1 ? 0.35 : 0.7
         });
 
-        placeMarker({lat: data[i][0], lng: data[i][1]}, type, data[i][3]);
+        placeMarker(data[i]);
 
         // ADD A CLICK EVENT SO OTHER POKEMONS CAN BE ADDED ON TOP OF IT
         google.maps.event.addListener(circle, 'click', function(args) {
             $('#add-latitude').val(args.latLng.lat());
             $('#add-longitude').val(args.latLng.lng());
-            placeMarker({lat: args.latLng.lat(), lng: args.latLng.lng()}, null, null, true);
+            placeMarker({location:{lat: args.latLng.lat(), lng: args.latLng.lng()}}, true);
         });
     }
 }
@@ -184,8 +209,8 @@ function getDataPoints(type) {
     }).done(function(data) {
         var obj = JSON.parse(data);
         $.each(obj, function(k, v) {
-            var s = [parseFloat(v[0]),parseFloat(v[1]), parseInt(v[2]), v[3]];
-            dataPoints.push(s);
+            var o = {location: {lat: parseFloat(v[0]), lng: parseFloat(v[1])}, type: parseInt(v[2]), pokemon: v[3], votes: {up:v[4],down:v[5]}, createdAt: v[6]};
+            dataPoints.push(o);
         });
         placeDataPoints(dataPoints);
     });

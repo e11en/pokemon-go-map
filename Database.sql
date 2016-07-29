@@ -45,6 +45,8 @@ CREATE TABLE `sighting` (
   `latitude` varchar(200) NOT NULL,
   `longitude` varchar(200) NOT NULL,
   `name` varchar(100) NOT NULL,
+  `voteUp` int(11) NOT NULL,
+  `voteDown` int(11) NOT NULL,
   `updatedAt` int(11) NOT NULL,
   `createdAt` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
