@@ -5,6 +5,11 @@ var marker;
 var locations = [];
 
 $(document).ready(function() {
+    // CLICK EVENT FOR THE EDITING OF THE NAMES OF POKESTOPS AND GYMS
+    $('body').on('click', '.editable-name', function() {
+        editNameSighting(this);
+    });
+
     // CLICK EVENT TO OPEN THE MOBILE MENU
     $('#menu-open').click(function(e){
         $('#menu').css('display','block');
@@ -159,7 +164,11 @@ function closeAllInfoWindows(){
 function infoWindowForMarker(marker, data){
     var contentHeading = "";
     if(data.pokemon['pokedex'] == undefined){
-        contentHeading = data.name === null ? 'No name' : data.name;
+        var value =  data.name === null ? 'No name' : data.name;
+        contentHeading = '<div class="editable-name">'+
+                            '<span>' + value + '</span>'+
+                            '<i class="fa fa-pencil" aria-hidden="true"></i>'+
+                         '</div>';
     } else
         contentHeading = data.pokemon['pokedex']+" "+data.pokemon['name'];
     var contentString = '<div id="content" class="infoWindow">'+
@@ -230,17 +239,9 @@ function getDataPoints(type) {
         context: document.body
     }).done(function(data) {
         var obj = JSON.parse(data);
-        var temp = true;
         $.each(obj, function(k, v) {
             var o = {location: {lat: parseFloat(v[0]), lng: parseFloat(v[1])}, type: parseInt(v[2]), name: v[8], pokemon: v[3], votes: {up:v[4],down:v[5]}, createdAt: v[6], creator: v[7]};
             dataPoints.push(o);
-
-            if(temp){
-                if(o.type === 2) {
-                    console.log(o);
-                    temp = false;
-                }
-            }
         });
         placeDataPoints(dataPoints);
     });
@@ -377,4 +378,13 @@ function sendSighting(){
             }
         });
     }
+}
+
+function editNameSighting(element) {
+    // show a popup with an input
+
+    // if save, then save the new value to the db
+    // else, close the popup
+
+    // reload that specific info window
 }

@@ -138,6 +138,18 @@ html, body {
     padding: 1em 0.5em 0;
 }
 
+.editable-name i {
+    font-size: 0.5em;
+    color: rgba(0, 25, 73, 0.31);
+    display: none;
+}
+
+.editable-name:hover {
+    cursor: pointer;
+    color: rgba(0, 25, 73, 0.31);
+}
+
+.editable-name:hover i{ display:inline-block; }
 
 /* MOBILE QUERIES */
 @media (max-width: 460px) {
