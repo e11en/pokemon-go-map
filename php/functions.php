@@ -56,7 +56,7 @@ function getSightings($type = null, $id = null){
         $rows = $stmt->fetchAll();
         $result = [];
         foreach ($rows as $row) {
-            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokemonId($row['pokemonId']), $row['voteUp'], $row['voteDown'], date("Y-m-d", $row['createdAt']), $row['name']];
+            $result[] = [$row['latitude'], $row['longitude'], $row['type'], getPokemonById($row['pokemonId']), $row['voteUp'], $row['voteDown'], date("Y-m-d", $row['createdAt']), $row['creator'], $row['name']];
         }
 
         return $result;
@@ -70,7 +70,7 @@ function getSightings($type = null, $id = null){
  * @param $id
  * @return int
  */
-function getPokemonId($id){
+function getPokemonById($id){
     try{
         $pdo = getPDO();
         $sql = 'SELECT pokedex,name FROM pokemon WHERE id = :id LIMIT 1';
@@ -99,7 +99,7 @@ function getRecentActivity(){
         $result = [];
         foreach ($rows as $row) {
             $timeStamp = convertTime($row['createdAt']);
-            $result[] = [$row['type'], $row['name'], $timeStamp];
+            $result[] = [$row['type'], $row['creator'], $timeStamp];
         }
 
         return $result;
@@ -177,19 +177,19 @@ function getPartOfDT($format, $dateTime){
 function setSighting(){
     try{
         $pdo = getPDO();
-        $stmt = $pdo->prepare("INSERT INTO sighting (pokemonId, type, latitude, longitude, name, updatedAt, createdAt) VALUES (:pokemonId, :type, :latitude, :longitude, :name, :update, :create)");
+        $stmt = $pdo->prepare("INSERT INTO sighting (pokemonId, type, latitude, longitude, creator, updatedAt, createdAt) VALUES (:pokemonId, :type, :latitude, :longitude, :creator, :update, :create)");
         $pokemon = intval($_POST['pokemon']);
         $type = intval($_POST['type']);
         $latitude = floatval($_POST['latitude']);
         $longitude = floatval($_POST['longitude']);
-        $name = $_POST['name'];
+        $creator = $_POST['creator'];
         $time = time();
 
         $stmt->bindParam(':pokemonId', $pokemon);
         $stmt->bindParam(':type', $type);
         $stmt->bindParam(':latitude', $latitude);
         $stmt->bindParam(':longitude', $longitude);
-        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':creator', $creator);
         $stmt->bindParam(':update', $time);
         $stmt->bindParam(':create', $time);
         $stmt->execute();

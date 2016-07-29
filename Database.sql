@@ -41,10 +41,11 @@ CREATE TABLE `pokemon` (
 CREATE TABLE `sighting` (
   `id` int(11) NOT NULL,
   `pokemonId` int(11) NOT NULL,
+  `name` varchar(100) NULL,
   `type` int(11) NOT NULL,
   `latitude` varchar(200) NOT NULL,
   `longitude` varchar(200) NOT NULL,
-  `name` varchar(100) NOT NULL,
+  `creator` varchar(100) NOT NULL,
   `voteUp` int(11) NOT NULL,
   `voteDown` int(11) NOT NULL,
   `updatedAt` int(11) NOT NULL,

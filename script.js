@@ -157,13 +157,17 @@ function closeAllInfoWindows(){
 }
 
 function infoWindowForMarker(marker, data){
-    var contentHeading = data.pokemon['pokedex']+" "+data.pokemon['name'];
+    var contentHeading = "";
+    if(data.pokemon['pokedex'] == undefined){
+        contentHeading = data.name === null ? 'No name' : data.name;
+    } else
+        contentHeading = data.pokemon['pokedex']+" "+data.pokemon['name'];
     var contentString = '<div id="content" class="infoWindow">'+
         '<div id="siteNotice">'+
         '</div>'+
         '<h1 id="firstHeading" class="firstHeading">'+contentHeading+'</h1>'+
         '<div id="bodyContent">'+
-            '<p>Added '+data.createdAt+' by '+data.creator+'</p>'+
+            '<p>Added on '+data.createdAt+' by '+data.creator+'</p>'+
             '<div class="pull-left">' +
                 '<button class="btn btn-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></button>'+
                 '<h3>'+data.votes.up+'</h3>'+
@@ -226,9 +230,17 @@ function getDataPoints(type) {
         context: document.body
     }).done(function(data) {
         var obj = JSON.parse(data);
+        var temp = true;
         $.each(obj, function(k, v) {
-            var o = {location: {lat: parseFloat(v[0]), lng: parseFloat(v[1])}, type: parseInt(v[2]), pokemon: v[3], votes: {up:v[4],down:v[5]}, createdAt: v[6], creator: v[7]};
+            var o = {location: {lat: parseFloat(v[0]), lng: parseFloat(v[1])}, type: parseInt(v[2]), name: v[8], pokemon: v[3], votes: {up:v[4],down:v[5]}, createdAt: v[6], creator: v[7]};
             dataPoints.push(o);
+
+            if(temp){
+                if(o.type === 2) {
+                    console.log(o);
+                    temp = false;
+                }
+            }
         });
         placeDataPoints(dataPoints);
     });
@@ -290,7 +302,7 @@ function sendSighting(){
     var type = 1;
     var latitude = $('#add-latitude').val();
     var longitude = $('#add-longitude').val();
-    var name = $('#add-name').val();
+    var creator = $('#add-creator').val();
 
     if(pokemon === 'pokestop'){
         type = 2;
@@ -320,8 +332,8 @@ function sendSighting(){
     } else {
         $('#add-longitude').parent().removeClass('has-error');
     }
-    if(name.replace(/\s/g, "").length <= 0){
-        name = 'Anonymous';
+    if(creator.replace(/\s/g, "").length <= 0){
+        creator = 'Anonymous';
     }
 
     // SEND VALID DATA TO DB
@@ -334,7 +346,7 @@ function sendSighting(){
                 type: type,
                 latitude: latitude,
                 longitude: longitude,
-                name: name
+                creator: creator
             }
         }).done(function(data) {
             var obj = JSON.parse(data);
@@ -352,7 +364,7 @@ function sendSighting(){
                 $('#add-longitude').val('');
 
                 // EXCEPT FOR NAME IF IT'S NOT ANONYMOUS
-                $('#add-name').val() === 'Anonymous' ? $('#add-name').val('') : null; // for future use?
+                $('#add-creator').val() === 'Anonymous' ? $('#add-creator').val('') : null; // for future use?
 
                 initMap();
                 getDataPoints('all');
