@@ -42,7 +42,7 @@ $(document).ready(function() {
         var id = $('#setSighting-id').val();
         if(id > 0){
             $.ajax({
-                url: $GLOBALS.URLPHP+"php/unsetSighting.php",
+                url: "php/unsetSighting.php",
                 type: "POST",
                 data: {id : id}
             }).done(function(data) {
@@ -74,9 +74,6 @@ $(document).ready(function() {
 
     // SHOW ALL DATA POINTS
     getDataPoints('all');
-
-    // GET RECENT ACTIVITY
-    //getRecentActivity();
 });
 
 
@@ -182,7 +179,7 @@ function placeDataPoints(data){
 function getDataPoints(type) {
     var dataPoints = [];
     $.ajax({
-        url: $GLOBALS.URLPHP+"php/getSighting.php?type="+type,
+        url: "php/getSighting.php?type="+type,
         context: document.body
     }).done(function(data) {
         var obj = JSON.parse(data);
@@ -231,7 +228,7 @@ function drawCircle(point, radius, dir) {
  * */
 function setPokemon() {
     $.ajax({
-        url: $GLOBALS.URLPHP+"php/getSelectValues.php?type=pokemon",
+        url: "php/getSelectValues.php?type=pokemon",
         context: document.body
     }).done(function(data) {
         var obj = JSON.parse(data);
@@ -288,7 +285,7 @@ function sendSighting(){
     if(valid){
         $.ajax({
             method: 'POST',
-            url: $GLOBALS.URLPHP+"php/setSighting.php",
+            url: "php/setSighting.php",
             data: {
                 pokemon: pokemon,
                 type: type,
@@ -325,21 +322,4 @@ function sendSighting(){
             }
         });
     }
-}
-
-/**
- * Get recent activity
- */
-function getRecentActivity() {
-    $.ajax({
-        method: 'POST',
-        url: $GLOBALS.URLPHP+"php/getRecentActivity.php"
-    }).done(function(data) {
-        var obj = JSON.parse(data);
-        $.each(obj, function(k, v) {
-            console.log(v);
-            var type = v[0] === 1 ? 'Pokemon' : v[0] === 2 ? 'Pokestop' : 'Gym';
-            $('#recent-activity').append('<tr><td>'+v[1]+'</td><td>'+type+'</td><td>'+v[2]+'</td></tr>');
-        });
-    });
 }
