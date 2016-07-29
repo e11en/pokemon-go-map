@@ -10,7 +10,7 @@ include_once('db.php');
  * Get all pokemon from the database
  * @return array
  */
-function getPokemon(){
+function getAllPokemons(){
     try{
         $pdo = getPDO();
         $sql = 'SELECT * FROM pokemon ORDER BY pokedex';

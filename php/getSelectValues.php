@@ -4,7 +4,7 @@ include_once('functions.php');
 if(isset($_GET['type'])){
     if($_GET['type'] === 'pokemon'){
         // Return all pokemon as JSON
-        echo json_encode(getPokemon());
+        echo json_encode(getAllPokemons());
     }
 }
 
